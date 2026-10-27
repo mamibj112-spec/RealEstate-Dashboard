@@ -1,0 +1,14 @@
+{
+  "appId": "com.realestate.dashboard",
+  "appName": "부동산대시보드",
+  "webDir": "www",
+  "server": {
+    "url": "https://mamibj112-spec.github.io/RealEstate-Dashboard/",
+    "cleartext": false
+  },
+  "plugins": {
+    "CapacitorHttp": {
+      "enabled": true
+    }
+  }
+}

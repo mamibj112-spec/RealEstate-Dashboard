@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0f766e">
+  <title>부동산대시보드</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <header class="top">
+      <div>
+        <h1>부동산대시보드</h1>
+        <p class="today" id="today"></p>
+      </div>
+      <div class="streak" id="streak" title="연속 학습일">🔥 <b id="streakNum">0</b>일</div>
+    </header>
+
+    <main>
+      <!-- 홈 -->
+      <section class="tab active" id="tab-home">
+        <div class="card term-card">
+          <div class="card-head">
+            <span class="badge">오늘의 부동산 용어</span>
+            <span class="muted" id="termIndex"></span>
+          </div>
+          <h2 id="termWord"></h2>
+          <p id="termDesc"></p>
+          <p class="term-ex" id="termEx"></p>
+          <div class="row">
+            <button class="btn ghost" id="termPrev">← 이전</button>
+            <button class="btn primary" id="termDone">학습 완료 ✓</button>
+            <button class="btn ghost" id="termNext">다음 →</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h3>청약 일정</h3>
+            <a class="link" href="https://www.applyhome.co.kr" target="_blank" rel="noopener">청약홈 ↗</a>
+          </div>
+          <ul class="list" id="subsList"></ul>
+          <form class="form compact" id="subsForm">
+            <input name="name" placeholder="단지명 (예: OO자이 1순위)" required>
+            <div class="row">
+              <input name="date" type="date" required>
+              <select name="kind">
+                <option>특별공급</option><option>1순위</option><option>2순위</option>
+                <option>당첨발표</option><option>계약</option><option>기타</option>
+              </select>
+            </div>
+            <button class="btn primary full" type="submit">일정 추가</button>
+          </form>
+        </div>
+      </section>
+
+      <!-- 계산기 -->
+      <section class="tab" id="tab-calc">
+        <div class="seg" id="calcSeg">
+          <button data-calc="loan" class="on">대출</button>
+          <button data-calc="tax">취득세</button>
+          <button data-calc="fee">중개보수</button>
+          <button data-calc="dsr">DSR·LTV</button>
+          <button data-calc="rent">전월세</button>
+        </div>
+        <div id="calcBody"></div>
+        <p class="note">계산 결과는 참고용입니다. 실제 세액·한도는 정책과 개인 상황에 따라 다를 수 있어요.</p>
+      </section>
+
+      <!-- 실거래가 -->
+      <section class="tab" id="tab-trade">
+        <div class="card">
+          <form class="form" id="tradeForm">
+            <div class="seg small" id="tradeKind">
+              <button type="button" data-kind="trade" class="on">매매</button>
+              <button type="button" data-kind="rent">전월세</button>
+            </div>
+            <label>지역<select name="region" id="regionSel"></select></label>
+            <label>법정동코드 직접 입력 (선택)<input name="code" inputmode="numeric" maxlength="5" placeholder="5자리, 비우면 위 지역 사용"></label>
+            <label>거래 월<input name="ym" type="month" required></label>
+            <label>단지명 필터 (선택)<input name="q" placeholder="예: 래미안"></label>
+            <button class="btn primary full" type="submit">조회</button>
+          </form>
+        </div>
+        <div id="tradeResult"></div>
+        <details class="card settings">
+          <summary>API 키 설정</summary>
+          <p class="muted">공공데이터포털(data.go.kr)에서 <b>국토교통부 아파트 매매/전월세 실거래가 자료</b> 활용신청 후 발급받은 인증키를 넣어주세요. 키는 이 폰에만 저장됩니다.</p>
+          <input id="apiKey" placeholder="일반 인증키 (Encoding 또는 Decoding)">
+          <button class="btn ghost full" id="apiKeySave" type="button">저장</button>
+        </details>
+      </section>
+
+      <!-- 관심 매물 -->
+      <section class="tab" id="tab-memo">
+        <div class="card">
+          <div class="card-head">
+            <h3 id="memoFormTitle">관심 매물 추가</h3>
+            <button class="link" id="memoCancel" type="button" hidden>취소</button>
+          </div>
+          <form class="form" id="memoForm"></form>
+        </div>
+        <div class="row filter">
+          <input id="memoSearch" placeholder="검색 (단지명, 지역)">
+          <select id="memoSort">
+            <option value="new">최신순</option>
+            <option value="star">별점순</option>
+            <option value="price">가격순</option>
+          </select>
+        </div>
+        <div id="memoList"></div>
+      </section>
+    </main>
+
+    <nav class="bottom">
+      <button data-tab="home" class="on"><span>🏠</span>홈</button>
+      <button data-tab="calc"><span>🧮</span>계산기</button>
+      <button data-tab="trade"><span>📊</span>실거래가</button>
+      <button data-tab="memo"><span>📌</span>관심매물</button>
+    </nav>
+  </div>
+
+  <script src="js/storage.js"></script>
+  <script src="js/format.js"></script>
+  <script src="js/terms-data.js"></script>
+  <script src="js/regions.js"></script>
+  <script src="js/home.js"></script>
+  <script src="js/calc.js"></script>
+  <script src="js/trade.js"></script>
+  <script src="js/memo.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
